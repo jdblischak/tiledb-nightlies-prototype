@@ -29,12 +29,15 @@ jobs:
           echo "TZ: $TZ"
           echo "date: $(date)"
           echo "$(date +%Y_%m_%d)" > date.txt
+          cat date.txt
       - name: Obtain version
         run: |
           cat TileDB/tiledb/sm/c_api/tiledb_version.h | grep '#define' | cut -d' ' -f3 | tr '\n' '.' > version.txt
+          cat version.txt
       - name: Obtain commit
         run: |
           git -C TileDB/ log -n 1 --format=format:%H > commit.txt
+          cat commit.txt
       - name: Update recipe
         run: |
           # Update version
