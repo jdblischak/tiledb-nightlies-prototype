@@ -67,7 +67,7 @@ The instructions below are based off of the [conda-smithy][] instructions for
 [making a new feedstock][making-a-new-feedstock].
 
 [conda-smithy]: https://github.com/conda-forge/conda-smithy
-https://github.com/conda-forge/conda-smithy#making-a-new-feedstock
+[making-a-new-feedstock]: https://github.com/conda-forge/conda-smithy#making-a-new-feedstock
 
 * (Once per GitHub org/user) Create an account on [Azure DevOps][azure]
   by authenticating with the corresponding GitHub user or org account.
