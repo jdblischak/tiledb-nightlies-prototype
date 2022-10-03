@@ -78,6 +78,7 @@ jobs:
       - name: Install conda-smithy with micromamba
         uses: mamba-org/provision-with-micromamba@main
         with:
+          environment-file: false
           extra-specs: conda-smithy
       - name: Rerender feedstock
         working-directory: tiledb-feedstock
