@@ -1,0 +1,89 @@
+name: tiledb
+on:
+  schedule: # Every night at 2 AM UTC (9 PM EST; 10 PM EDT)
+    - cron: "* 2 * * *"
+  workflow_dispatch:
+jobs:
+  tiledb:
+    runs-on: ubuntu-latest
+    name: tiledb
+    env:
+      TZ: "America/New_York"
+    steps:
+      - name: Clone feedstock
+        uses: actions/checkout@v3
+        with:
+          #repository: TileDB-Inc/tiledb-feedstock
+          repository: jdblischak/tiledb-feedstock
+          ref: main
+          path: tiledb-feedstock
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY_TILEDB }}
+      - name: Clone source
+        uses: actions/checkout@v3
+        with:
+          repository: TileDB-Inc/TileDB
+          ref: dev
+          path: TileDB
+      - name: Obtain date
+        run: |
+          echo "TZ: $TZ"
+          echo "date: $(date)"
+          echo "$(date +%Y_%m_%d)" > date.txt
+      - name: Obtain version
+        run: |
+          cat TileDB/tiledb/sm/c_api/tiledb_version.h | grep '#define' | cut -d' ' -f3 | tr '\n' '.' > version.txt
+      - name: Obtain commit
+        run: |
+          git -C TileDB/ log -n 1 --format=format:%H > commit.txt
+      - name: Update recipe
+        run: |
+          # Update version
+          version="$(cat version.txt)$(cat date.txt)"
+          sed -i \
+            s/"{% set version = \".*\" %}"/"{% set version = \"$version\" %}"/ \
+            tiledb-feedstock/recipe/meta.yaml
+          # Update source URL
+          sed -i \
+            s/"url: https:\/\/github.com\/TileDB-Inc\/{{ name }}\/archive\/{{ version }}.tar.gz"/"git_url: https:\/\/github.com\/TileDB-Inc\/{{ name }}.git"/ \
+            tiledb-feedstock/recipe/meta.yaml
+          # Replace tarball SHA256 with Git SHA1
+          commit="$(cat commit.txt)"
+          sed -i \
+            s/"sha256: .\+"/"git_rev: $commit\n  git_depth: 1"/ \
+            tiledb-feedstock/recipe/meta.yaml
+          # Ensure build number is 0
+          sed -i \
+            s/"  number: [0-9]\+"/"  number: 0"/ \
+            tiledb-feedstock/recipe/meta.yaml
+          # Print differences
+          git -C tiledb-feedstock/ diff recipe/meta.yaml
+      - name: Update channels
+        working-directory: tiledb-feedstock
+        run: |
+          # Disable conda-forge validation
+          echo "conda_forge_output_validation: False" >> conda-forge.yml
+          # Change upload channel
+          echo -e "channel_targets:\n  - jdblischak nightlies" >> recipe/conda_build_config.yaml
+          # Print differences
+          git diff conda-forge.yml recipe/conda_build_config.yaml
+      - name: Add and commit
+        working-directory: tiledb-feedstock
+        run: |
+          version="$(cat ../version.txt)$(cat ../date.txt)"
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "runneradmin@github.com"
+          git checkout -B nightly-build main
+          git add conda-forge.yml recipe/conda_build_config.yaml recipe/meta.yaml
+          git commit -m "Nightly build for $version"
+      - name: Install conda-smithy with micromamba
+        uses: mamba-org/provision-with-micromamba@main
+        with:
+          extra-specs: conda-smithy
+      - name: Rerender feedstock
+        working-directory: tiledb-feedstock
+        shell: bash -l {0}
+        run: conda smithy rerender --commit auto
+      - name: Push update to GitHub
+        working-directory: tiledb-feedstock
+        run: |
+          git push origin nightly-build
