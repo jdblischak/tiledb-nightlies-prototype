@@ -60,3 +60,80 @@ For each feedstock, generate a new SSH key pair:
    ```sh
    rm -r /tmp/ssh-temp/
    ```
+
+## Anaconda.org upload token (`BINSTAR_TOKEN`)
+
+The instructions below are based off of the [conda-smithy][] instructions for
+[making a new feedstock][making-a-new-feedstock].
+
+[conda-smithy]: https://github.com/conda-forge/conda-smithy
+https://github.com/conda-forge/conda-smithy#making-a-new-feedstock
+
+* (Once per GitHub org/user) Create an account on [Azure DevOps][azure]
+  by authenticating with the corresponding GitHub user or org account.
+  Importantly, you don't need to sign-up for the full Azure cloud experience to
+  run Azure pipelines (I made this mistake, and now my inbox is flooded with
+  Azure how-to emails)
+
+    [azure]: https://dev.azure.com/
+
+* (Once per GitHub org/user) Either pay for builds or apply for free builds for
+  open source projects at https://aka.ms/azpipelines-parallelism-request. By
+  default new Azure DevOps organizations are granted zero parallel builds, which
+  means you can't run anything, even serially
+
+* (Once per GitHub org/user) Create a new project named "feedstock-builds". This
+  will be used to run the CI for all the feedstocks in your GitHub org/user. By
+  default it is private. If you haven't already, you have to first allow public
+  projects in your Azure DevOps account before you can make it public
+
+* (Once per GitHub org/user) Connect the project "feedstock-builds" to your
+  GitHub org/user via a "service connection". Go to "Project Settings" (bottom
+  left in UI) -> "Service Connections" -> "Create Service Connection" -> GitHub.
+  Grant it authorization via OAuth using the GitHub OAuth App AzurePipelines (to
+  avoid having to generate a PAT). Name the service connection the same as your
+  GitHub user/org
+
+* Fork the conda-forge feedstock repo to your org/user account
+
+* Clone the fork to your local machine
+
+* (Once per machine) Install conda-smithy
+
+    ```sh
+    mamba install -c conda-forge conda-smithy
+    ```
+
+* Create an [Azure token][azure-token] and save it in
+  `~/.conda-smithy/azure.token`
+
+  [azure-token]: https://dev.azure.com/conda-forge/_usersSettings/tokens
+
+* Run `conda smithy register-ci` in the local feedstock repo to activate builds
+  on Azure DevOps. Note that you don't need to bother with the Anaconda token.
+  Azure requires you to upload it manually later, so there's no point in saving
+  it locally
+
+    ```sh
+    export AZURE_ORG_OR_USER="<your GitHub org/user>"
+    # Switch --organization with --user for a GitHub user account
+    conda smithy register-ci \
+      --organization "<your GitHub org/user>" \
+      --feedstock_directory . \
+      --without-travis \
+      --without-circle \
+      --without-appveyor \
+      --without-drone \
+      --without-webservice \
+      --without-anaconda-token
+    ```
+
+    If you were successful, you'll now see the new feedstock listed at https://dev.azure.com/<account>/feedstock-builds/_build?view=folders
+
+* Create a token for anaconda.org
+  * Login to your account at anaconda.org
+  * Settings -> Access
+
+* Add the anaconda.org token as a pipeline variable on Azure. From the pipeline
+  page: Edit -> Variables -> New variable -> Name it `BINSTAR_TOKEN` ->
+  Copy-paste token -> Check "Keep this value secret" -> OK -> Save
