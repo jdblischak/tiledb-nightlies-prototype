@@ -1,5 +1,10 @@
 # Prototype for centralized nightly CI builds for TileDB
 
+Name        | status  | version | last updated | downloads
+----------- | ------- | ------- | ------------ | ---------
+TileDB      | [![tiledb](https://github.com/jdblischak/tiledb-nightlies-prototype/workflows/tiledb/badge.svg)](https://github.com/jdblischak/tiledb-nightlies-prototype/actions/workflows/tiledb.yml) | [![version](https://anaconda.org/jdblischak/tiledb/badges/version.svg)](https://anaconda.org/jdblischak/tiledb) | ![last updated](https://anaconda.org/jdblischak/tiledb/badges/latest_release_date.svg) | ![downloads](https://anaconda.org/jdblischak/tiledb/badges/downloads.svg)
+TileDB-Py   | [![tiledb-py](https://github.com/jdblischak/tiledb-nightlies-prototype/workflows/tiledb-py/badge.svg)](https://github.com/jdblischak/tiledb-nightlies-prototype/actions/workflows/tiledb-py.yml) | [![version](https://anaconda.org/jdblischak/tiledb-py/badges/version.svg)](https://anaconda.org/jdblischak/tiledb-py) | ![last updated](https://anaconda.org/jdblischak/tiledb-py/badges/latest_release_date.svg) | ![downloads](https://anaconda.org/jdblischak/tiledb-py/badges/downloads.svg)
+
 ## How it works
 
 * The GitHub Actions workflows in the repository are scheduled run each night
