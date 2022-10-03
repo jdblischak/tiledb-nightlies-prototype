@@ -93,4 +93,4 @@ jobs:
       - name: Push update to GitHub
         working-directory: tiledb-feedstock
         run: |
-          git push origin nightly-build
+          git push --force origin nightly-build
