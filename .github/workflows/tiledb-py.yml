@@ -75,6 +75,8 @@ jobs:
         run: |
           # Disable conda-forge validation
           echo "conda_forge_output_validation: False" >> conda-forge.yml
+          # Add tiledb as source channel
+          echo -e "channel_sources:\n  - conda-forge,tiledb" >> recipe/conda_build_config.yaml
           # Change upload channel
           echo -e "channel_targets:\n  - jdblischak nightlies" >> recipe/conda_build_config.yaml
           # Print differences
