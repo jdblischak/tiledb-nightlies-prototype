@@ -1,5 +1,27 @@
 # Prototype for centralized nightly CI builds for TileDB
 
+## How it works
+
+* The GitHub Actions workflows in the repository are scheduled run each night
+  (they can also be manually triggered)
+
+* The job clones both the TileDB-Inc fork of the feedstock repo and also the
+  source repo
+
+* The job updates the recipe (`meta.yaml`) to use the version string
+  (X.X.X.YYYY_MM_DD), where X.X.X are derived from the source repo
+
+* The job also updates the upload channels so that the conda binaries are
+  uploaded to the tiledb channel on anaconda.org with the label "nightlies"
+  (this prototype uploads to my personal channel
+  [jdblischak][anaconda.org-tiledb]). It rerenders the feedstock with
+  conda-smithy
+
+    [anaconda.org-tiledb]: https://anaconda.org/jdblischak/tiledb/files?version=&channel=nightlies
+
+* The job force pushes to the feedstock branch "nightly-build" to trigger Azure
+  builds and uploads (this is made possible by manually configured SSH keys; see
+  below)
 
 ## SSH keys
 
