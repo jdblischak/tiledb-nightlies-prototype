@@ -82,7 +82,7 @@ jobs:
         uses: mamba-org/provision-with-micromamba@main
         with:
           environment-file: false
-          environment-name: base
+          environment-name: env
           extra-specs: conda-smithy
       - name: Rerender feedstock
         working-directory: tiledb-feedstock
