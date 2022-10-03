@@ -83,8 +83,9 @@ jobs:
         with:
           environment-file: false
           environment-name: env
-          channels: conda-forge
           extra-specs: conda-smithy
+          channels: conda-forge
+          cache-env: true
       - name: Rerender feedstock
         working-directory: tiledb-feedstock
         shell: bash -l {0}
