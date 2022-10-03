@@ -1,0 +1,106 @@
+name: tiledb-py
+on:
+  schedule: # Every night at 3 AM UTC (10 PM EST; 11 PM EDT)
+    - cron: "* 3 * * *"
+  workflow_dispatch:
+jobs:
+  tiledb-py:
+    runs-on: ubuntu-latest
+    name: tiledb-py
+    env:
+      TZ: "America/New_York"
+    steps:
+      - name: Clone feedstock
+        uses: actions/checkout@v3
+        with:
+          #repository: TileDB-Inc/tiledb-py-feedstock
+          repository: jdblischak/tiledb-py-feedstock
+          ref: main
+          path: tiledb-py-feedstock
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY_TILEDB-PY }}
+      - name: Clone source
+        uses: actions/checkout@v3
+        with:
+          repository: TileDB-Inc/TileDB-Py
+          ref: dev
+          path: TileDB-Py
+      - name: Obtain date
+        run: |
+          echo "TZ: $TZ"
+          echo "date: $(date)"
+          echo "$(date +%Y_%m_%d)" > date.txt
+          cat date.txt
+      - name: Obtain version (from the previous release)
+        run: |
+          cat TileDB-Py/misc/azure-release.yml | grep "TILEDBPY_VERSION: [0-9]" | sed s/"        TILEDBPY_VERSION: "// > version.txt
+          cat version.txt
+      - name: Obtain commit
+        run: |
+          git -C TileDB-Py/ log -n 1 --format=format:%H > commit.txt
+          cat commit.txt
+      - name: Update recipe
+        run: |
+          # Update version
+          version="$(cat version.txt).$(cat date.txt)"
+          sed -i \
+            s/"{% set version = \".*\" %}"/"{% set version = \"$version\" %}"/ \
+            tiledb-py-feedstock/recipe/meta.yaml
+          # Convert source from PyPI tarball to Git repo
+          commit="$(cat commit.txt)"
+          sed -i \
+            s/"{% set sha256 = \".*\" %}"/"{% set sha1 = \"$commit\" %}"/ \
+            tiledb-py-feedstock/recipe/meta.yaml
+          sed -i \
+            s/"fn: {{ name }}-{{ version }}.tar.gz"/"git_depth: 1"/ \
+            tiledb-py-feedstock/recipe/meta.yaml
+          sed -i \
+            s/"url: https:\/\/pypi.io\/packages\/source\/{{ name\[0\] }}\/{{ name }}\/{{ name }}-{{ version }}.tar.gz"/"git_url: https:\/\/github.com\/TileDB-Inc\/TileDB-Py.git"/ \
+            tiledb-py-feedstock/recipe/meta.yaml
+          sed -i \
+            s/"sha256: {{ sha256 }}"/"git_rev: {{ sha1 }}"/ \
+            tiledb-py-feedstock/recipe/meta.yaml
+          # Ensure build number is 0
+          sed -i \
+            s/"  number: [0-9]\+"/"  number: 0"/ \
+            tiledb-py-feedstock/recipe/meta.yaml
+          # Pin tiledb by the date
+          date="$(cat date.txt)"
+          sed -i \
+            s/"- tiledb [0-9].\+"/"- tiledb \*.$date"/ \
+            tiledb-py-feedstock/recipe/meta.yaml
+          # Print differences
+          git -C tiledb-py-feedstock/ diff recipe/meta.yaml
+      - name: Update channels
+        working-directory: tiledb-py-feedstock
+        run: |
+          # Disable conda-forge validation
+          echo "conda_forge_output_validation: False" >> conda-forge.yml
+          # Change upload channel
+          echo -e "channel_targets:\n  - jdblischak nightlies" >> recipe/conda_build_config.yaml
+          # Print differences
+          git diff conda-forge.yml recipe/conda_build_config.yaml
+      - name: Add and commit
+        working-directory: tiledb-py-feedstock
+        run: |
+          version="$(cat ../version.txt).$(cat ../date.txt)"
+          git config --local user.name "GitHub Actions"
+          git config --local user.email "runneradmin@github.com"
+          git checkout -B nightly-build main
+          git add conda-forge.yml recipe/conda_build_config.yaml recipe/meta.yaml
+          git commit -m "Nightly build for $version"
+      - name: Install conda-smithy with micromamba
+        uses: mamba-org/provision-with-micromamba@main
+        with:
+          environment-file: false
+          environment-name: env
+          extra-specs: conda-smithy
+          channels: conda-forge
+          cache-env: true
+      - name: Rerender feedstock
+        working-directory: tiledb-py-feedstock
+        shell: bash -l {0}
+        run: conda smithy rerender --commit auto
+      - name: Push update to GitHub
+        working-directory: tiledb-py-feedstock
+        run: |
+          git push --force origin nightly-build
