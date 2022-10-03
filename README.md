@@ -133,6 +133,9 @@ The instructions below are based off of the [conda-smithy][] instructions for
 * Create a token for anaconda.org
   * Login to your account at anaconda.org
   * Settings -> Access
+  * Choose scope "Allow all API operations". I couldn't find any documentation
+    that linked the scopes to allowable actions. I tried "Allow all operations
+    on Conda repositories", but that failed due to insufficient permissions.
 
 * Add the anaconda.org token as a pipeline variable on Azure. From the pipeline
   page: Edit -> Variables -> New variable -> Name it `BINSTAR_TOKEN` ->
