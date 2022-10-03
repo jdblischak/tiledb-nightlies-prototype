@@ -39,6 +39,7 @@ For each feedstock, generate a new SSH key pair:
 1. Add SSH private key (`/tmp/ssh-temp/key`) to tiledb-nightlies as a repository secret named
    `SSH_PRIVATE_KEY_<software>`:
     * Settings -> Secrets -> Actions -> New repository secret
+    * Note: the name of the secret cannot included dashes (GitHub restriction)
 
 1. Add SSH public key (`/tmp/ssh-temp/key.pub`) to TileDB-Inc fork of feedstock
    repository as a deploy key with write access:
