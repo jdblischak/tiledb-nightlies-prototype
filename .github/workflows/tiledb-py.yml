@@ -1,7 +1,7 @@
 name: tiledb-py
 on:
   schedule: # Every night at 3 AM UTC (10 PM EST; 11 PM EDT)
-    - cron: "* 3 * * *"
+    - cron: "0 3 * * *"
   workflow_dispatch:
 jobs:
   tiledb-py:
