@@ -38,6 +38,12 @@ jobs:
         run: |
           git -C TileDB-Py/ log -n 1 --format=format:%H > commit.txt
           cat commit.txt
+      - name: Pull from upstream feedstock
+        working-directory: tiledb-py-feedstock
+        run: |
+          git remote add upstream git@github.com:conda-forge/tiledb-py-feedstock.git
+          git pull upstream main
+          git push origin main
       - name: Update recipe
         run: |
           # Update version
