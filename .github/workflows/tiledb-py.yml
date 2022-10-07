@@ -102,7 +102,15 @@ jobs:
         with:
           environment-file: false
           environment-name: env
-          extra-specs: conda-smithy
+          extra-specs: |
+            conda-smithy
+            cmake
+            cython
+            numpy
+            pybind11
+            setuptools
+            setuptools-scm
+            wheel
           channels: conda-forge
           cache-env: true
       - name: Rerender feedstock
