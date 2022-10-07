@@ -1,8 +1,6 @@
 name: tiledb
 on:
   schedule:
-    branches:
-      - main
     # - cron: "0 1 * * *" # Every night at 1 AM UTC (8 PM EST; 9 PM EDT)
     - cron: "0 1 */3 * *" # reduce to every 3 days for now
   workflow_dispatch:
