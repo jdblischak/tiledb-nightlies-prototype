@@ -97,6 +97,7 @@ jobs:
         shell: bash -l {0}
         run: conda smithy rerender --commit auto
       - name: Push update to GitHub
+        if: ${{ github.ref == 'refs/heads/main' && github.repository == 'jdblischak/tiledb-nightlies-prototype' && github.event_name != 'pull_request' }}
         working-directory: tiledb-feedstock
         run: |
           git push --force origin nightly-build
