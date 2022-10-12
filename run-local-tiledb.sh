@@ -31,9 +31,10 @@ bash scripts/tiledb/update-recipe.sh
 bash scripts/update-channels.sh tiledb-feedstock
 bash scripts/add-and-commit.sh tiledb-feedstock
 
-conda env list | grep -q env-nightlies-tiledb
-if [[ $? -eq 1 ]]
+if conda env list | grep -q env-nightlies-tiledb
 then
+  echo "Conda env already exists: env-nightlies-tiledb"
+else
   echo "Installing conda env 'env-nightlies-tiledb'"
   mamba create --yes --quiet -n env-nightlies-tiledb \
     -c conda-forge --override-channels \

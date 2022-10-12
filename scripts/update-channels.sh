@@ -13,4 +13,4 @@ echo -e "channel_sources:\n  - conda-forge,tiledb/label/nightlies,jdblischak/lab
 echo -e "channel_targets:\n  - jdblischak nightlies" >> "$repo/recipe/conda_build_config.yaml"
 
 # Print differences
-git -C "$repo" diff conda-forge.yml recipe/conda_build_config.yaml
+git -C "$repo" --no-pager diff conda-forge.yml recipe/conda_build_config.yaml

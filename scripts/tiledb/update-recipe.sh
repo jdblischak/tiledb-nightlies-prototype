@@ -24,4 +24,4 @@ sed -i \
   tiledb-feedstock/recipe/meta.yaml
 
 # Print differences
-git -C tiledb-feedstock/ diff recipe/meta.yaml
+git -C tiledb-feedstock/ --no-pager diff recipe/meta.yaml
