@@ -58,7 +58,7 @@ jobs:
       - name: Pull from upstream feedstock
         run: bash ci/scripts/pull-upstream-feedstock.sh tiledb-py-feedstock
       - name: Update recipe
-        run: bash ci/scripts/tiledb/update-recipe.sh
+        run: bash ci/scripts/tiledb-py/update-recipe.sh
       - name: Update channels
         run: bash ci/scripts/update-channels.sh tiledb-py-feedstock
       - name: Add and commit
