@@ -59,7 +59,7 @@ jobs:
           # Replace tarball SHA256 with Git SHA1
           commit="$(cat commit.txt)"
           sed -i \
-            s/"sha256: .\+"/"git_rev: $commit\n  git_depth: 1"/ \
+            s/"sha256: .\+"/"git_rev: $commit\n  git_depth: 10"/ \
             tiledb-feedstock/recipe/meta.yaml
           # Ensure build number is 0
           sed -i \
