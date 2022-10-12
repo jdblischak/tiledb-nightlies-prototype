@@ -28,6 +28,29 @@ TileDB-Py   | [![tiledb-py](https://github.com/jdblischak/tiledb-nightlies-proto
   builds and uploads (this is made possible by manually configured SSH keys; see
   below)
 
+## Run and test locally
+
+To semi-reproduce the GitHub Actions workflows, run the following:
+
+```sh
+bash run-local-tiledb.sh
+bash run-local-tiledb-py.sh
+
+# To push changes to feedstock repos
+# (not recommended unless GitHub Actions is broken)
+bash run-local-tiledb.sh TRUE
+# Wait for tiledb-feedstock runs to finish
+bash run-local-tiledb-py.sh TRUE
+```
+
+To locally install a nightly version:
+
+```sh
+mamba create --yes -n test-nightly \
+  -c conda-forge -c "jdblischak/label/nightlies" \
+  --override-channels tiledb-py="*2022*"
+```
+
 ## SSH keys
 
 For each feedstock, generate a new SSH key pair:
