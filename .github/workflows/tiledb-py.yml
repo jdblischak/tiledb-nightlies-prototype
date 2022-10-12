@@ -52,7 +52,7 @@ jobs:
         working-directory: TileDB-Py
         shell: bash -l {0}
         run: |
-          python setup.py --version > version.txt
+          python setup.py --version | tail -n 1 > ../version.txt
           cat version.txt
       - name: Obtain commit
         run: |
