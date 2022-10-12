@@ -32,9 +32,27 @@ jobs:
           echo "date: $(date)"
           echo "$(date +%Y.%m.%d)" > date.txt
           cat date.txt
-      - name: Obtain version (from the previous release)
+      - name: Install conda-smithy and deps with micromamba
+        uses: mamba-org/provision-with-micromamba@main
+        with:
+          environment-file: false
+          environment-name: env
+          extra-specs: |
+            conda-smithy
+            cmake
+            cython
+            numpy
+            pybind11
+            setuptools
+            setuptools-scm
+            wheel
+          channels: conda-forge
+          cache-env: true
+      - name: Obtain version from setup.py
+        working-directory: TileDB-Py
+        shell: bash -l {0}
         run: |
-          cat TileDB-Py/misc/azure-release.yml | grep "TILEDBPY_VERSION: [0-9]" | sed s/"        TILEDBPY_VERSION: "// > version.txt
+          python setup.py --version > version.txt
           cat version.txt
       - name: Obtain commit
         run: |
@@ -98,26 +116,6 @@ jobs:
           git checkout -B nightly-build main
           git add conda-forge.yml recipe/conda_build_config.yaml recipe/meta.yaml
           git commit -m "Nightly build for $version"
-      - name: Install conda-smithy with micromamba
-        uses: mamba-org/provision-with-micromamba@main
-        with:
-          environment-file: false
-          environment-name: env
-          extra-specs: |
-            conda-smithy
-            cmake
-            cython
-            numpy
-            pybind11
-            setuptools
-            setuptools-scm
-            wheel
-          channels: conda-forge
-          cache-env: true
-      - name: Determine version from setup.py
-        working-directory: TileDB-Py
-        shell: bash -l {0}
-        run: python setup.py --version
       - name: Rerender feedstock
         working-directory: tiledb-py-feedstock
         shell: bash -l {0}
