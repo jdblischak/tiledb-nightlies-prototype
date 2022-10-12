@@ -1,6 +1,8 @@
 #!/bin/bash
 set -eu
 
+# Attempt to locally replicate GitHub Actions workflow
+#
 # Usage: bash run-local-tiledb.sh [TRUE/FALSE]
 #
 # Pass argument TRUE to push changes to feedstocks

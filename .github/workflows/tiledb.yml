@@ -16,7 +16,6 @@ jobs:
         with:
           #repository: TileDB-Inc/tiledb-nightlies
           repository: jdblischak/tiledb-nightlies-prototype
-          ref: main
           path: ci
       - name: Clone feedstock
         uses: actions/checkout@v3
