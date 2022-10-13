@@ -46,7 +46,7 @@ bash run-local-tiledb-py.sh TRUE
 To locally install a nightly version:
 
 ```sh
-mamba create --yes -n test-nightly \
+mamba create --yes -n test-nightlies \
   -c conda-forge -c "jdblischak/label/nightlies" \
   --override-channels tiledb-py="*2022*"
 ```
