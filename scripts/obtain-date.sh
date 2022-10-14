@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eux
 
 echo "TZ: $TZ"
 echo "date: $(date)"

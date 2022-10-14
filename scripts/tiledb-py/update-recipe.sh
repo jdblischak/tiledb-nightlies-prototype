@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu
+set -eux
 
 # Update version
 version="$(cat version.txt).$(cat date.txt)"
