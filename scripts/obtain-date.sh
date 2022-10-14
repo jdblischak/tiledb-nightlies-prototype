@@ -3,5 +3,5 @@ set -eux
 
 echo "TZ: $TZ"
 echo "date: $(date)"
-echo "$(date +%Y.%m.%d)" > date.txt
+echo "$(date +%Y_%m_%d)" > date.txt
 cat date.txt
