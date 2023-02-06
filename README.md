@@ -1,3 +1,5 @@
+The prototype has been implemented in [TileDB-Inc/conda-forge-nightly-controller](https://github.com/TileDB-Inc/conda-forge-nightly-controller)
+
 # Prototype for centralized nightly CI builds for TileDB
 
 Name | status | azure | version | last updated | downloads
