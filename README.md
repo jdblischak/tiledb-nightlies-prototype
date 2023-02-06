@@ -151,7 +151,7 @@ The instructions below are based off of the [conda-smithy][] instructions for
       --without-anaconda-token
     ```
 
-    If you were successful, you'll now see the new feedstock listed at https://dev.azure.com/<account>/feedstock-builds/_build?view=folders
+    If you were successful, you'll now see the new feedstock listed at `https://dev.azure.com/<account>/feedstock-builds/_build?view=folders`
 
 * Create a token for anaconda.org
   * Login to your account at anaconda.org
